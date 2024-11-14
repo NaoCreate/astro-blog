@@ -7,4 +7,5 @@ import sitemap from '@astrojs/sitemap';
 export default defineConfig({
 	site: 'https://example.com',
 	integrations: [mdx(), sitemap()],
+	output: "hybrid",//hybridにすることで、静的生成するページとSSRするページを設定できるようにします
 });

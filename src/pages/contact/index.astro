@@ -1,0 +1,53 @@
+---
+import BaseHead from "../../components/BaseHead.astro";
+import Footer from "../../components/Footer.astro";
+import Header from "../../components/Header.astro";
+import ContactForm from "../../components/ContactForm.astro";
+
+// contactページがSSRモードになる
+export const prerender = false;
+// フォームで送信した内容をサーバーサイドで受け取り、呼び出す
+import { postContact } from "../../libs/client";
+
+if (Astro.request.method === "POST") {
+  try {
+    const data = await Astro.request.formData();
+    const name = data.get("name")?.toString();
+    const email = data.get("email")?.toString();
+    const message = data.get("message")?.toString();
+    if (!name || !email || !message) {
+      throw new Error("名前、Email、内容は必須です");
+    }
+    //下記2行は送信後にリロードすると同じ内容が再度POSTされるのを防止の為
+    await postContact({ name, email, message });
+    return Astro.redirect("/contact");
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(error.message);
+    }
+  }
+} 
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead title={"お問い合わせ"} description={"description"} />
+  </head>
+  <body>
+    <Header />
+    <main>
+      <h1>お問い合わせ</h1>
+      <ContactForm />
+    </main>
+    <Footer />
+    <style>
+      h1 {
+        font-size: 32px;
+        text-align: center;
+        margin-bottom: 24px;
+      }
+      
+    </style>
+  </body>
+</html>
