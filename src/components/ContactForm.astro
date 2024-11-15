@@ -1,18 +1,18 @@
-<form method="POST">
-    <label>
-      名前:
-      <input type="text" name="name" required />
-    </label>
-    <label>
-      Email:
-      <input type="email" name="email" required />
-    </label>
-    <label>
-      内容:
-      <textarea name="message" required></textarea>
-    </label>
-    <button>送信</button>
-  </form>
+<form id="contactForm" action="/api/contact" method="POST">
+  <label>
+    名前:
+    <input type="text" name="name" placeholder="お名前" required />
+  </label>
+  <label>
+    Email:
+    <input type="email" name="email" placeholder="メールアドレス" required />
+  </label>
+  <label>
+    内容:
+    <textarea name="message" placeholder="メッセージ" required></textarea>
+  </label>
+  <button type="submit">送信</button>
+</form>
 
   <style>
     form {
