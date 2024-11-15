@@ -7,7 +7,6 @@ import ContactForm from "../../components/ContactForm.astro";
 // contactページがSSRモードになる
 export const prerender = false;
 // フォームで送信した内容をサーバーサイドで受け取り、呼び出す
-import { postContact } from "../../libs/client";
 
 if (Astro.request.method === "POST") {
   try {
@@ -19,7 +18,6 @@ if (Astro.request.method === "POST") {
       throw new Error("名前、Email、内容は必須です");
     }
     //下記2行は送信後にリロードすると同じ内容が再度POSTされるのを防止の為
-    await postContact({ name, email, message });
     return Astro.redirect("/contact");
   } catch (error) {
     if (error instanceof Error) {
