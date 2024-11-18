@@ -1,18 +1,12 @@
 import nodemailer from 'nodemailer';
+import type { VercelRequest, VercelResponse } from '@vercel/node';
 
-type ContactData = {
-  name: string;
-  email: string;
-  message: string;
-};
+export default async function handler(req: VercelRequest, res: VercelResponse) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ message: 'Method Not Allowed' });
+  }
 
-type ResponseData = {
-  message: string;
-  error?: unknown;
-};
-
-export async function sendContactEmail(data: ContactData): Promise<ResponseData> {
-  const { name, email, message } = data;
+  const { name, email, message } = req.body;
 
   // リクエストデータの確認
   console.log("受け取ったデータ:", { name, email, message }); 
@@ -45,7 +39,6 @@ export async function sendContactEmail(data: ContactData): Promise<ResponseData>
       text: `名前: ${name}\nメールアドレス: ${email}\nメッセージ:\n${message}`,
     });
 
-    // 運営者メール送信成功の確認
     console.log("運営者へのメール送信成功:", adminEmailResponse);
 
     console.log("問い合わせ者への受付完了メール送信を試みます。"); // 問い合わせ者へのメール送信前のログ
@@ -58,12 +51,11 @@ export async function sendContactEmail(data: ContactData): Promise<ResponseData>
       text: `こんにちは ${name}さん,\n\nお問い合わせありがとうございます。内容を確認しました。\n\nご返信をお待ちください。\n\nメッセージ:\n${message}`,
     });
 
-    // 問い合わせ者メール送信成功の確認
     console.log("問い合わせ者へのメール送信成功:", userEmailResponse);
 
-    return { message: 'メールが送信されました' };
+    return res.status(200).json({ message: 'メールが送信されました' });
   } catch (error) {
     console.error("メール送信中にエラーが発生しました:", error); // エラー発生時のログ
-    return { message: 'メールの送信に失敗しました', error };
+    return res.status(500).json({ message: 'メールの送信に失敗しました', error });
   }
 }
