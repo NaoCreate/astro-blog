@@ -12,5 +12,5 @@ export default defineConfig({
 
   //hybridにすることで、静的生成するページとSSRするページを設定できるようにします
   output: "hybrid",
-  adapter: vercel()
+  adapter: vercel(),
 });
