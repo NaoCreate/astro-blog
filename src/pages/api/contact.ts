@@ -2,21 +2,17 @@ import type { APIRoute } from 'astro';
 import nodemailer from 'nodemailer';
 
 export const post: APIRoute = async ({ request }) => {
-  const data = await request.json();
-  
-  // リクエストデータ全体をログに記録
-  console.log("リクエストボディ:", data);
-  const { name, email, message } = data;
+  const formData = await request.formData();
+  const name = formData.get("name")?.toString();
+  const email = formData.get("email")?.toString();
+  const message = formData.get("message")?.toString();
 
-  // リクエストデータの確認
-  console.log("受け取ったデータ:", { name, email, message }); 
-
-  // Nodemailer設定の環境変数を確認
-  console.log("SMTP設定:", {
-    host: import.meta.env.SMTP_HOST,
-    port: import.meta.env.SMTP_PORT,
-    user: import.meta.env.SMTP_USER,
-  });
+  if (!name || !email || !message) {
+    return new Response(JSON.stringify({ message: "入力データが不足しています" }), {
+      status: 400,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
 
   // Nodemailerの設定
   const transporter = nodemailer.createTransport({
