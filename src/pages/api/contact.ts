@@ -3,6 +3,9 @@ import nodemailer from 'nodemailer';
 
 export const post: APIRoute = async ({ request }) => {
   const data = await request.json();
+  
+  // リクエストデータ全体をログに記録
+  console.log("リクエストボディ:", data);
   const { name, email, message } = data;
 
   // リクエストデータの確認

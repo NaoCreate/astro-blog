@@ -8,23 +8,23 @@ import ContactForm from "../../components/ContactForm.astro";
 export const prerender = false;
 // フォームで送信した内容をサーバーサイドで受け取り、呼び出す
 
-if (Astro.request.method === "POST") {
-  try {
-    const data = await Astro.request.formData();
-    const name = data.get("name")?.toString();
-    const email = data.get("email")?.toString();
-    const message = data.get("message")?.toString();
-    if (!name || !email || !message) {
-      throw new Error("名前、Email、内容は必須です");
-    }
-    //下記2行は送信後にリロードすると同じ内容が再度POSTされるのを防止の為
-    return Astro.redirect("/contact");
-  } catch (error) {
-    if (error instanceof Error) {
-      console.error(error.message);
-    }
-  }
-} 
+// if (Astro.request.method === "POST") {
+//   try {
+//     const data = await Astro.request.formData();
+//     const name = data.get("name")?.toString();
+//     const email = data.get("email")?.toString();
+//     const message = data.get("message")?.toString();
+//     if (!name || !email || !message) {
+//       throw new Error("名前、Email、内容は必須です");
+//     }
+//     //下記2行は送信後にリロードすると同じ内容が再度POSTされるのを防止の為
+//     return Astro.redirect("/contact");
+//   } catch (error) {
+//     if (error instanceof Error) {
+//       console.error(error.message);
+//     }
+//   }
+// } 
 ---
 
 <!doctype html>
