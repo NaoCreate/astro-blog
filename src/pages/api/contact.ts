@@ -1,5 +1,5 @@
-import nodemailer from 'nodemailer';
 import type { APIRoute } from 'astro';
+import nodemailer from 'nodemailer';
 
 export const post: APIRoute = async ({ request }) => {
   const data = await request.json();
