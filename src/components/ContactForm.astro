@@ -15,8 +15,10 @@
 </form>
 
 <script>
-  const form = document.getElementById('contactForm') as HTMLFormElement;
+  // 型アサーションを使用して型を明示的に指定
+  const form = document.getElementById('contactForm') as HTMLFormElement | null;
 
+  // formがnullでないことを確認
   if (form) {
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
@@ -43,8 +45,12 @@
         alert(`エラーが発生しました: ${error.message}`);
       }
     });
+  } else {
+    console.error("フォームが見つかりません。'contactForm' のIDが正しいか確認してください。");
   }
 </script>
+
+
 
 
   <style>
