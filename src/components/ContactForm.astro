@@ -15,14 +15,14 @@
 </form>
 
 <script>
-  // 型アサーションを使用して型を明示的に指定
+  // 型アサーションを使用して明示的に型を指定
   const form = document.getElementById('contactForm') as HTMLFormElement | null;
 
-  // formがnullでないことを確認
   if (form) {
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
 
+      // `form`を型アサーションした上で`FormData`を作成
       const formData = new FormData(form);
       const data = {
         name: formData.get('name'),
@@ -30,19 +30,24 @@
         message: formData.get('message'),
       };
 
-      const response = await fetch('/api/contact', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
+      try {
+        const response = await fetch('/api/contact', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+        });
 
-      if (response.ok) {
-        alert('お問い合わせが送信されました！');
-      } else {
-        const error = await response.json();
-        alert(`エラーが発生しました: ${error.message}`);
+        if (response.ok) {
+          alert('お問い合わせが送信されました！');
+        } else {
+          const error = await response.json();
+          alert(`エラーが発生しました: ${error.message}`);
+        }
+      } catch (err) {
+        console.error('送信エラー:', err);
+        alert('送信中にエラーが発生しました。');
       }
     });
   } else {
@@ -51,76 +56,46 @@
 </script>
 
 
-
-
-  <style>
-    form {
-      background: #fff;
-      padding: 2em;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      max-width: 400px;
-      width: 100%;
-      margin: auto;
-      animation: fadeIn 1s ease-in-out;
-    }
-  
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(-20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-  
-    label {
-      display: block;
-      margin-bottom: 1em;
-      font-weight: bold;
-      color: #333;
-    }
-  
-    input[type="text"],
-    input[type="email"],
-    textarea {
-      width: calc(100% - 20px);
-      padding: 10px;
-      margin-top: 5px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      font-size: 1em;
-    }
-  
-    input[type="text"]:focus,
-    input[type="email"]:focus,
-    textarea:focus {
-      border-color: #007bff;
-      outline: none;
-      box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-    }
-  
-    textarea {
-      height: 100px;
-      resize: vertical;
-    }
-  
-    button {
-      display: inline-block;
-      width: 100%;
-      padding: 10px;
-      background-color: #007bff;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      font-size: 1em;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-  
-    button:hover {
-      background-color: #0056b3;
-    }
-  </style>
+<style>
+  form {
+    background: #fff;
+    padding: 2em;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    margin: auto;
+  }
+  label {
+    display: block;
+    margin-bottom: 1em;
+    font-weight: bold;
+    color: #333;
+  }
+  input,
+  textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  input:focus,
+  textarea:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  }
+  button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  button:hover {
+    background-color: #0056b3;
+  }
+</style>
