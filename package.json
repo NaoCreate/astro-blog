@@ -17,8 +17,10 @@
     "@sendgrid/mail": "^8.1.4",
     "@vercel/node": "^2.10.3",
     "astro": "^4.16.11",
+    "fetch-blob": "^4.0.0",
     "googleapis": "^144.0.0",
     "microcms-js-sdk": "^3.1.2",
+    "node-domexception": "^2.0.1",
     "node-fetch": "^3.3.2",
     "nodemailer": "^6.9.16",
     "whatwg-url": "^14.0.0"
