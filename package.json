@@ -20,6 +20,7 @@
     "googleapis": "^144.0.0",
     "microcms-js-sdk": "^3.1.2",
     "node-fetch": "^3.3.2",
+    "nodemailer": "^6.9.16",
     "whatwg-url": "^14.0.0"
   },
   "devDependencies": {
