@@ -18,7 +18,9 @@
     "@vercel/node": "^2.10.3",
     "astro": "^4.16.11",
     "googleapis": "^144.0.0",
-    "microcms-js-sdk": "^3.1.2"
+    "microcms-js-sdk": "^3.1.2",
+    "node-fetch": "^3.3.2",
+    "whatwg-url": "^14.0.0"
   },
   "devDependencies": {
     "@types/node": "^22.9.0"

@@ -15,6 +15,24 @@
 </form>
 
 <script>
+  import sgMail from '@sendgrid/mail';
+  import { google } from 'googleapis';
+
+  // SendGridのAPIキーを設定
+  sgMail.setApiKey(import.meta.env.SENDGRID_API_KEY);
+
+  // Google Sheets APIの認証設定
+  const auth = new google.auth.GoogleAuth({
+    keyFile: 'google-service-key-AstroContactForm.json', // サービスアカウントキーのファイルパス
+    scopes: ['https://www.googleapis.com/auth/spreadsheets'], // 使用するGoogle APIのスコープ
+  });
+
+  // Google Sheets APIクライアントの作成
+  const sheets = google.sheets({ version: 'v4', auth });
+
+  // スプレッドシートのIDを設定（スプレッドシートのURLから取得）
+  const SPREADSHEET_ID = '1vNlzZXsUzC9B1PJdPg9-TLvgW8gD4__n74-9shL0R6Q';
+
   // 型アサーションを使用して明示的に型を指定
   const form = document.getElementById('contactForm') as HTMLFormElement | null;
 
@@ -24,30 +42,60 @@
 
       // `form`を型アサーションした上で`FormData`を作成
       const formData = new FormData(form);
+
+      // 必須項目の値を取得し、nullチェックを行う
+      const email = formData.get('email');
+      const name = formData.get('name');
+      const message = formData.get('message');
+
+      if (!email || !name || !message || typeof email !== 'string' || typeof name !== 'string' || typeof message !== 'string') {
+        alert('すべての項目を正しく入力してください');
+        return;
+      }
+
       const data = {
-        name: formData.get('name'),
-        email: formData.get('email'),
-        message: formData.get('message'),
+        name,
+        email,
+        message,
       };
 
       try {
-        const response = await fetch('/api/contact', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
+        // --- ① Google Sheetsにデータを保存 ---
+        const sheetsResponse = await sheets.spreadsheets.values.append({
+          spreadsheetId: SPREADSHEET_ID, // スプレッドシートのID
+          range: 'testForm!A2', // データを追加するシート名とセル範囲
+          valueInputOption: 'RAW', // 入力オプション（RAWはそのまま保存）
+          requestBody: {
+            values: [
+              [new Date().toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo' }), name, email, message],
+              // スプレッドシートに保存するデータ(A列:日時, B列:名前, C列:メールアドレス, D列:内容)
+            ],
           },
-          body: JSON.stringify(data),
+        });
+        console.log('スプレッドシートにデータを保存しました:', sheetsResponse.data);
+
+        // --- ② SendGridでメールを送信 ---
+        // サイト管理者への通知メール
+        await sgMail.send({
+          to: 'naocreate52@gmail.com', // 管理者のメールアドレス
+          from: 'contact@naocreate.net', // 認証済みの送信元アドレス
+          subject: '新しいお問い合わせがあります',
+          text: `名前: ${name}\nメールアドレス: ${email}\nメッセージ:\n${message}`,
         });
 
-        if (response.ok) {
-          alert('お問い合わせが送信されました！');
-        } else {
-          const error = await response.json();
-          alert(`エラーが発生しました: ${error.message}`);
-        }
-      } catch (err) {
-        console.error('送信エラー:', err);
-        alert('送信中にエラーが発生しました。');
+        // 問い合わせ者への確認メール
+        await sgMail.send({
+          to: email, // 問い合わせ者のメールアドレス
+          from: 'contact@naocreate.net', // 認証済みの送信元アドレス
+          subject: 'お問い合わせを受け付けました',
+          text: `こんにちは ${name}さん,\n\nお問い合わせありがとうございます。内容を確認しました。\n\nご返信をお待ちください。\n\nメッセージ:\n${message}`,
+        });
+
+        // --- 正常終了時の処理 ---
+        alert('お問い合わせが送信されました！');
+      } catch (error) {
+        console.error('エラーが発生しました:', error);
+        alert(`送信中にエラーが発生しました: ${error.message}`);
       }
     });
   } else {
