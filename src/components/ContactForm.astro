@@ -1,3 +1,8 @@
+---
+// import Hoge from "xxx/xxx/xxx";
+---
+<!-- ↑一番上に書く---で囲った部分はサーバー側で動く -->
+
 <form id="contactForm">
   <label>
     名前:
@@ -14,7 +19,9 @@
   <button type="submit">送信</button>
 </form>
 
+<!-- ↓ここから下のscriptタグの中はフロント側で動く -->
 <script>
+  // ↓この2つのライブラリはサーバー側でしか動かせないが、クライアント側で動かそうとしているからエラーが出ている
   import nodemailer from 'nodemailer';
   import { google } from 'googleapis';
 
